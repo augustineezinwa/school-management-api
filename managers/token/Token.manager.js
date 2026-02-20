@@ -1,6 +1,7 @@
 const jwt        = require('jsonwebtoken');
 const { nanoid } = require('nanoid');
 const md5        = require('md5');
+const bcrypt     = require('bcrypt');
 
 
 module.exports = class TokenManager {
@@ -25,11 +26,11 @@ module.exports = class TokenManager {
      * long token contains immutable data and long lived
      * master key must exists on any device to create short tokens
      */
-    genLongToken({userId, userKey}){
+    genLongToken({userId, role}){
         return jwt.sign(
             { 
-                userKey, 
                 userId,
+                role,
             }, 
             this.config.dotEnv.LONG_TOKEN_SECRET, 
             {expiresIn: this.longTokenExpiresIn
@@ -75,5 +76,24 @@ module.exports = class TokenManager {
         });
 
         return { shortToken };
+    }
+
+    /**
+     * hashes a password using bcrypt
+     * @param {string} password - The password to hash
+     * @returns {string} - The hashed password
+     */
+    hashPassword(password){
+        return bcrypt.hash(password, 10);
+    }
+
+    /**
+     * compares a password with a hashed password
+     * @param {string} password - The password to compare
+     * @param {string} hashedPassword - The hashed password to compare
+     * @returns {boolean} - True if the password matches the hashed password
+     */
+    comparePassword(password, hashedPassword){
+        return bcrypt.compare(password, hashedPassword);
     }
 }

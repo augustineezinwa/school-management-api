@@ -134,6 +134,25 @@ const isChance = (max)=>{
     return min == value; 
 }
 
+function normalizeDbError(err) {
+    if (err?.code === 11000) {
+      const path =
+        Object.keys(err.keyPattern || {})[0] ||
+        Object.keys(err.keyValue || {})[0] ||
+        "unknown";
+  
+      const value = err.keyValue ? err.keyValue[path] : undefined;
+  
+      return {
+        error: `resource [${path}] already exists`,
+        errors: [{ path, code: "duplicate", value }],
+        code: 409,
+      };
+    }
+  
+    return null;
+  }
+
 module.exports = {
   slugify,
   getDeepValue,
@@ -147,5 +166,6 @@ module.exports = {
   hrTime,
   match,
   isChance,
+  normalizeDbError,
 
 }

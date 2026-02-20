@@ -11,7 +11,8 @@ module.exports = class ApiHandler {
      * @param {string} prop with key to scan for exposed methods
      */
 
-    constructor({config, cortex, cache, managers, mwsRepo, prop}){
+    constructor({utils, config, cortex, cache, managers, mwsRepo, prop}){
+        this.utils         = utils;
         this.config        = config;
         this.cache         = cache; 
         this.cortex        = cortex;
@@ -114,6 +115,10 @@ module.exports = class ApiHandler {
                 result = await targetModule[`${fnName}`](data);
             } catch (err){
                 console.log(`error`, err);
+                const normalized = this.utils?.normalizeDbError?.(err);
+                if(normalized){
+                    return normalized;
+                }
                 result.error = `${fnName} failed to execute`;
             }
     
@@ -156,6 +161,10 @@ module.exports = class ApiHandler {
                 ...results,
                 res,
             }});
+            const manager = this.managers[moduleName];
+            if (manager && typeof manager.serialize === "function" && !(result.errors || result.error || Array.isArray(result))) {
+                result = manager.serialize({ fnName, result });
+            }
             if(!result)result={}
 
             if(result.selfHandleResponse){
@@ -163,9 +172,9 @@ module.exports = class ApiHandler {
             } else {
                 
                 if(result.errors){
-                    return this.managers.responseDispatcher.dispatch(res, {ok: false, errors: result.errors});
+                    return this.managers.responseDispatcher.dispatch(res, {ok: false, code: result.code, errors: result.errors, message: result.error || result.message || "validation failed"});
                 } else if(result.error){
-                    return this.managers.responseDispatcher.dispatch(res, {ok: false, message: result.error});
+                    return this.managers.responseDispatcher.dispatch(res, {ok: false, code: result.code, message: result.error});
                 } else {
                     return this.managers.responseDispatcher.dispatch(res, {ok:true, data: result});
                 }

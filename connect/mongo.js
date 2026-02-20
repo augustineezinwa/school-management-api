@@ -1,11 +1,11 @@
 const mongoose      = require('mongoose');
+require('dotenv').config();
 mongoose.Promise    = global.Promise;
 
 module.exports = ({uri})=>{
   //database connection
   mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    dbName: process.env.MONGO_DATABASE_NAME,
   });
 
 
