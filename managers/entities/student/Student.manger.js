@@ -25,7 +25,7 @@ module.exports = class Student {
         this.serialize = serializers.createSerializer(this.fieldExposed);
     }
 
-    async enrollStudent({admissionNumber, firstName, lastName, dateOfBirth, gender, classroomId, schoolId}){
+    async enrollStudent({ __longToken, admissionNumber, firstName, lastName, dateOfBirth, gender, classroomId, schoolId }){
         const student = {admissionNumber, firstName, lastName, dateOfBirth, gender, classroomId, schoolId, enrolledAt: new Date() };
        
         // Data validation
@@ -46,14 +46,14 @@ module.exports = class Student {
         };
     }
 
-    async getStudents(){
+    async getStudents({ __longToken }){
         const students = await this.mongomodels.student.find({});
         return {
             students: students, 
         };
     }
 
-    async getStudentById({ __params }){
+    async getStudentById({ __longToken, __params }){
         const id = __params.id;
         
         // Data validation
@@ -68,7 +68,7 @@ module.exports = class Student {
         }; 
     }
 
-    async updateStudentProfileById({ __params, admissionNumber, firstName, lastName, dateOfBirth, gender, status }){
+    async updateStudentProfileById({ __longToken, __params, admissionNumber, firstName, lastName, dateOfBirth, gender, status }){
         const id = __params.id;
         let result = await this.validators.student.getStudentById(__params);
         if(result) return { errors: result };
@@ -94,7 +94,7 @@ module.exports = class Student {
         };
     }
 
-    async deleteStudentById({ __params }){
+    async deleteStudentById({ __longToken, __params }){
         const id = __params.id;
 
         // Data validation
@@ -110,7 +110,7 @@ module.exports = class Student {
         };
     }
 
-    async transferStudent({ __params, classroomId, schoolId }){
+    async transferStudent({ __longToken, __params, classroomId, schoolId }){
         const id = __params.id;
         let result = await this.validators.student.transferStudent({ id, classroomId, schoolId });
         if(result) return { errors: result };

@@ -24,7 +24,7 @@ module.exports = class ClassRoom {
         };
         this.serialize = serializers.createSerializer(this.fieldExposed);    }
 
-    async createClassroom({name, level, capacity, numberOfDesks, numberOfComputers, hasProjector, schoolId}){
+    async createClassroom({ __longToken, name, level, capacity, numberOfDesks, numberOfComputers, hasProjector, schoolId }){
         const classroom = {name, level, capacity, numberOfDesks, numberOfComputers, hasProjector, schoolId };
        
         // Data validation
@@ -38,7 +38,7 @@ module.exports = class ClassRoom {
         };
     }
 
-    async manageClassroomById({ __params, capacity, numberOfDesks, numberOfComputers, hasProjector, status }){
+    async manageClassroomById({ __longToken, __params, capacity, numberOfDesks, numberOfComputers, hasProjector, status }){
         const id = __params.id;
         let result = await this.validators.classroom.manageClassroomById(__params);
         if(result) return { errors: result };
@@ -62,7 +62,7 @@ module.exports = class ClassRoom {
         };
     }
 
-    async getClassroomsBySchoolId({ __params}) {
+    async getClassroomsBySchoolId({ __longToken, __params }) {
        let result = await this.validators.classroom.getClassroomsBySchoolId(__params);
        if(result) return { errors: result };
 
@@ -72,7 +72,7 @@ module.exports = class ClassRoom {
        };
     }
 
-    async deleteClassroomById({ __params}) {
+    async deleteClassroomById({ __longToken, __params }) {
         const id = __params.id;
 
         // Data validation

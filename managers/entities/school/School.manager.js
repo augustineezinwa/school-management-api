@@ -25,7 +25,7 @@ module.exports = class School {
         this.serialize = serializers.createSerializer(this.fieldExposed);
     }
 
-    async createSchool({name, email, phone, address, website, motto, establishedYear, imageUrl}){
+    async createSchool({ __longToken, name, email, phone, address, website, motto, establishedYear, imageUrl }){
         const slug = this.utils.slugify(name || '');
         const school = {name, slug, email, phone, address, website, motto, establishedYear, imageUrl };
        
@@ -40,14 +40,14 @@ module.exports = class School {
         };
     }
 
-    async getSchools(){
+    async getSchools({ __longToken }){
         const schools = await this.mongomodels.school.find({});
         return {
             schools: schools, 
         };
     }
 
-    async getSchoolById({ __params }){
+    async getSchoolById({ __longToken, __params }){
         const id = __params.id;
         
         // Data validation
@@ -62,7 +62,7 @@ module.exports = class School {
         }; 
     }
 
-    async updateSchoolById({ __params, name, email, phone, address, website, motto, establishedYear, imageUrl  }){
+    async updateSchoolById({ __longToken, __params, name, email, phone, address, website, motto, establishedYear, imageUrl }){
         const id = __params.id;
         const body = { id, name, email, phone, address, website, motto, establishedYear, imageUrl };
 
@@ -77,7 +77,7 @@ module.exports = class School {
         };
     }
 
-    async deleteSchoolById({ __params }){
+    async deleteSchoolById({ __longToken, __params }){
         const id = __params.id;
 
         // Data validation
@@ -111,7 +111,7 @@ module.exports = class School {
         }
     }
 
-    async updateSchoolProfile({ __params, name, email, phone, address, website, motto, establishedYear, imageUrl }){
+    async updateSchoolProfile({ __longToken, __params, name, email, phone, address, website, motto, establishedYear, imageUrl }){
         const id = __params.id;
         let result = await this.validators.school.getSchoolById(__params);
         if(result) return { errors: result };
