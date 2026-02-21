@@ -80,8 +80,8 @@ module.exports = class User {
         return { user: user, message: 'Password changed successfully' };
     }
 
-    async manageUserById({ __longToken, __userScope, __params, email, firstName, lastName, status, schoolId }){
-        let result = await this.validators.user.manageUserById({ id: __params.id, email, firstName, lastName, status, schoolId });
+    async manageUserById({ __longToken, __userScope, __params, email, firstName, lastName, status }){
+        let result = await this.validators.user.manageUserById({ id: __params.id, email, firstName, lastName, status });
         if(result) return { errors: result };
 
         const user = await this.mongomodels.user.findById(__params.id);
@@ -91,7 +91,6 @@ module.exports = class User {
         user.firstName = firstName || user.firstName;
         user.lastName = lastName || user.lastName;
         user.status = status || user.status;
-        user.schoolId = schoolId || user.schoolId;
 
         await user.save();
         return { user: user, message: 'User updated successfully' };

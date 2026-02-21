@@ -395,14 +395,13 @@ const endpointDocs = {
                     schema: {
                         type: "object",
                         properties: {
-                            email: { type: "string", format: "email" },
                             firstName: { type: "string" },
                             lastName: { type: "string" },
+                            email: { type: "string" },
                             status: { type: "string", enum: ["active", "inactive"] },
-                            schoolId: { type: "string" },
                         },
                     },
-                    example: { firstName: "Ada", status: "active" },
+                    example: { firstName: "Ada", lastName: "Lovelace", email: "ada@lovelace.com", status: "active" },
                 },
             },
         },
@@ -510,7 +509,37 @@ const endpointDocs = {
         successDataSchema: { type: "object", properties: { school: { $ref: "#/components/schemas/School" } } },
         successExample: { school: { ...componentExamples.school, name: "Updated School Name" } },
         parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
-        requestBody: { required: true, content: { "application/json": { example: { name: "Updated School Name" } } } },
+        requestBody: {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        type: "object",
+                        required: ["name", "email", "phone", "address", "establishedYear"],
+                        properties: {
+                            name: { type: "string" },
+                            email: { type: "string", format: "email" },
+                            phone: { type: "string" },
+                            address: { type: "string" },
+                            website: { type: "string" },
+                            motto: { type: "string" },
+                            establishedYear: { type: "string" },
+                            imageUrl: { type: "string" },
+                        },
+                    },
+                    example: {
+                        name: "Updated School Name",
+                        email: "info@lakeside.edu",
+                        phone: "+2348012345678",
+                        address: "12 Marina Road, Lagos",
+                        website: "https://lakeside.edu",
+                        motto: "Excellence Always",
+                        establishedYear: "2010",
+                        imageUrl: "https://lakeside.edu/logo.png",
+                    },
+                },
+            },
+        },
         responses: { 200: { description: "School updated" }, ...buildCommonResponses({ include404: true }) },
     },
     "school.deleteSchoolById": {
@@ -530,13 +559,42 @@ const endpointDocs = {
         responses: { 200: { description: "School deleted" }, ...buildCommonResponses({ include404: true }) },
     },
     "school.updateSchoolProfile": {
-        summary: "Update school profile",
+        summary: "Update school profile (partial update)",
         tags: ["Schools"],
         security: [{ bearerAuth: [] }],
         successDataSchema: { type: "object", properties: { school: { $ref: "#/components/schemas/School" } } },
         successExample: { school: { ...componentExamples.school, motto: "Excellence Always" } },
         parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
-        requestBody: { required: true, content: { "application/json": { example: { motto: "Excellence Always" } } } },
+        requestBody: {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        type: "object",
+                        properties: {
+                            name: { type: "string" },
+                            email: { type: "string", format: "email" },
+                            phone: { type: "string" },
+                            address: { type: "string" },
+                            website: { type: "string" },
+                            motto: { type: "string" },
+                            establishedYear: { type: "string" },
+                            imageUrl: { type: "string" },
+                        },
+                    },
+                    example: {
+                        name: "Lakeside Academy",
+                        email: "info@lakeside.edu",
+                        phone: "+2348012345678",
+                        address: "12 Marina Road, Lagos",
+                        website: "https://lakeside.edu",
+                        motto: "Excellence Always",
+                        establishedYear: "2010",
+                        imageUrl: "https://lakeside.edu/logo.png",
+                    },
+                },
+            },
+        },
         responses: { 200: { description: "School profile updated" }, ...buildCommonResponses({ include404: true }) },
     },
     "classroom.createClassroom": {
@@ -583,7 +641,30 @@ const endpointDocs = {
         successDataSchema: { type: "object", properties: { classroom: { $ref: "#/components/schemas/Classroom" } } },
         successExample: { classroom: { ...componentExamples.classroom, capacity: 50 } },
         parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
-        requestBody: { required: true, content: { "application/json": { example: { capacity: 50, status: "active" } } } },
+        requestBody: {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        type: "object",
+                        properties: {
+                            capacity: { type: "number" },
+                            numberOfDesks: { type: "number" },
+                            numberOfComputers: { type: "number" },
+                            hasProjector: { type: "boolean" },
+                            status: { type: "string", enum: ["active", "inactive"] },
+                        },
+                    },
+                    example: {
+                        capacity: 50,
+                        numberOfDesks: 30,
+                        numberOfComputers: 15,
+                        hasProjector: true,
+                        status: "active",
+                    },
+                },
+            },
+        },
         responses: { 200: { description: "Classroom updated" }, ...buildCommonResponses({ include404: true }) },
     },
     "classroom.getClassroomsBySchoolId": {
@@ -682,6 +763,18 @@ const endpointDocs = {
             required: true,
             content: {
                 "application/json": {
+                    schema: {
+                        type: "object",
+                        required: ["admissionNumber", "firstName", "lastName", "dateOfBirth", "gender", "status"],
+                        properties: {
+                            admissionNumber: { type: "string" },
+                            firstName: { type: "string" },
+                            lastName: { type: "string" },
+                            dateOfBirth: { type: "string", format: "date" },
+                            gender: { type: "string", enum: ["male", "female"] },
+                            status: { type: "string", enum: ["active", "inactive"] },
+                        },
+                    },
                     example: {
                         admissionNumber: "ADM-2026-0001",
                         firstName: "Jane",
