@@ -6,6 +6,11 @@ module.exports = {
         type: "string",
         length: { min: 1, max: 50 },
     },
+    gender: {
+        path: 'gender',
+        type: 'string',
+        oneOf: ['male', 'female'],
+    },
     username: {
         path: 'username',
         type: 'string',
@@ -38,6 +43,11 @@ module.exports = {
         type: 'string',
         length: {min: 3, max: 200},
     },
+    status: {
+        path: 'status',
+        type: 'string',
+        oneOf: ['active', 'inactive'],
+    },
     address: {
         path: "address",
         type: "string",
@@ -45,6 +55,11 @@ module.exports = {
       },
     schoolId: {
         path: 'schoolId',
+        type: 'string',
+        length: {min: 1, max: 50},
+    },
+    classroomId: {
+        path: 'classroomId',
         type: 'string',
         length: {min: 1, max: 50},
     },

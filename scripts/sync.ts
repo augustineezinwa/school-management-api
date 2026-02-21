@@ -11,8 +11,10 @@ async function run() {
 
     const User = require("../managers/entities/user/user.mongoModel");
     const School = require("../managers/entities/school/school.mongoModel");
+    const ClassRoom = require("../managers/entities/classroom/classroom.mongoModel");
+    const Student = require("../managers/entities/student/student.mongoModel");
 
-    const models = [User, School];
+    const models = [User, School, ClassRoom, Student];
 
     for (const model of models) {
         await model.createIndexes();

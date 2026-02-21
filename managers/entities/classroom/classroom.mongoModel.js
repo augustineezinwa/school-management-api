@@ -43,6 +43,6 @@ const ClassroomSchema = new mongoose.Schema({
 
 }, {timestamps: true });
 
-ClassroomSchema.index({ name: 1, schoolId: 1 }, { unique: true, locale: 'en', collation: { strength: 2 } });
+ClassroomSchema.index({ name: 1, schoolId: 1 }, { unique: true, collation: { locale: 'en', strength: 2 } });
 
 module.exports = mongoose.models.classrooms || mongoose.model('classrooms', ClassroomSchema);

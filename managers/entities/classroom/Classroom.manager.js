@@ -9,7 +9,7 @@ module.exports = class ClassRoom {
         this.tokenManager        = managers.token;
         this.classroomsCollection     = "classrooms";
         this.classroomExposed         = [];
-        this.httpExposed          = ['post=createClassroom'];
+        this.httpExposed          = ['post=createClassroom', 'patch=manageClassroomById' ];
         this.classroomStatus         = 'active';
         this.fieldExposed = {
             default: {
@@ -32,6 +32,28 @@ module.exports = class ClassRoom {
         const newClassroom = await classroomModel.create(classroom);
         return {
             classroom: newClassroom, 
+        };
+    }
+
+    async manageClassroomById({ __params, capacity, numberOfDesks, numberOfComputers, hasProjector }){
+        const id = __params.id;
+        if(!id) return { errors: 'Classroom ID is required' };
+
+        const classroom = await this.mongomodels.classroom.findById(id);
+        if(!classroom) return { errors: 'Classroom not found', code: 404 };
+
+        classroom.capacity = capacity || classroom.capacity;
+        classroom.numberOfDesks = numberOfDesks || classroom.numberOfDesks;
+        classroom.numberOfComputers = numberOfComputers || classroom.numberOfComputers;
+        classroom.hasProjector = hasProjector || classroom.hasProjector;
+
+        // Data validation
+        let result = await this.validators.classroom.manageClassroomById(classroom);
+        if(result) return { errors: result };
+
+        await classroom.save();
+        return {
+            classroom: classroom, 
         };
     }
 

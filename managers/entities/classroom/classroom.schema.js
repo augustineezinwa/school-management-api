@@ -13,22 +13,52 @@ module.exports = {
         {
             path: 'capacity',
             required: true,
+            type: 'number',
+            default: 0,
         },
         {
-            model: 'numberOfDesks',
+            path: 'numberOfDesks',
+            type: 'number',
+            required: false,
+            default: 0,
+        },
+        {
+            path: 'numberOfComputers',
+            type: 'number',
+            required: true,
+            default: 0,
             required: false,
         },
         {
-            model: 'numberOfComputers',
+            path: 'hasProjector',
+            type: 'boolean',
             required: false,
-        },
-        {
-            model: 'hasProjector',
-            required: false,
+            default: false,
         },
         {
             model: 'schoolId',
             required: true,
         },
     ],
+    manageClassroomById: [
+        {
+            path: 'numberOfDesks',
+            type: 'number',
+            required: false,
+            default: 0,
+        },
+        {
+            path: 'numberOfComputers',
+            type: 'number',
+            required: true,
+            default: 0,
+            required: false,
+        },
+        {
+            path: 'hasProjector',
+            type: 'boolean',
+            required: false,
+            default: false,
+        }
+    ]
 }
