@@ -128,6 +128,16 @@ const match = (str, model) => {
     return _wildcardToRegExp(model).test(str);
 }
 
+const getId = (value) => {
+    if (value === undefined || value === null) return null;
+    return String(value);
+}
+
+const getByPath = (source, path) => {
+    if (!source || !path) return null;
+    return path.split(".").reduce((acc, key) => (acc == null ? null : acc[key]), source);
+}
+
 const isChance = (max)=>{
     let min = 0;
     let value = Math.floor(Math.random() * (max - min + 1) + min);
@@ -165,6 +175,8 @@ module.exports = {
   arrayToObj,
   hrTime,
   match,
+  getId,
+  getByPath,
   isChance,
   normalizeDbError,
 

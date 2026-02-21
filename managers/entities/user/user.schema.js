@@ -75,6 +75,12 @@ module.exports = {
             required: false,
         },
     ],
+    assignAdminToSchool: [
+        {
+            model: 'id',
+            required: true,
+        },
+    ],
 }
 
 

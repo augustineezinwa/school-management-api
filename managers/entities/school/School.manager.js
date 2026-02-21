@@ -47,7 +47,7 @@ module.exports = class School {
         };
     }
 
-    async getSchoolById({ __longToken, __params }){
+    async getSchoolById({ __longToken, __schoolScope, __params }){
         const id = __params.id;
         
         // Data validation
@@ -111,7 +111,7 @@ module.exports = class School {
         }
     }
 
-    async updateSchoolProfile({ __longToken, __params, name, email, phone, address, website, motto, establishedYear, imageUrl }){
+    async updateSchoolProfile({ __longToken, __schoolScope, __params, name, email, phone, address, website, motto, establishedYear, imageUrl }){
         const id = __params.id;
         let result = await this.validators.school.getSchoolById(__params);
         if(result) return { errors: result };
@@ -134,22 +134,6 @@ module.exports = class School {
 
         await school.save();
         return { school: school };
-    }
-
-    async assignAdminToSchool({ __params, userId }){
-        const id = __params.id;
-        let result = await this.validators.school.assignAdminToSchool({ id, userId });
-        if(result) return { errors: result };
-
-        const school = await this.mongomodels.school.findById(id);
-        if(!school) return { errors: 'School not found', code: 404 };
-
-        const user = await this.mongomodels.user.findById(userId);
-        if(!user) return { errors: 'User not found', code: 404 };
-
-        user.schoolId = school.id;
-        await user.save();
-        return { user: user, message: 'Admin assigned to school successfully' };
     }
 
 }

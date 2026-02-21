@@ -8,7 +8,7 @@ module.exports = class User {
         this.tokenManager        = managers.token;
         this.usersCollection     = "users";
         this.userExposed         = [];
-        this.httpExposed          = ['post=createUser', 'post=login', 'patch=changePassword', 'patch=manageUserById'];
+        this.httpExposed          = ['post=createUser', 'post=login', 'patch=changePassword', 'patch=manageUserById', 'patch=assignAdminToSchool'];
         this.userRole           = 'school_admin';
         this.userStatus         = 'active';
 
@@ -56,7 +56,7 @@ module.exports = class User {
         const isPasswordValid = await this.tokenManager.comparePassword(password, user.password);
         if(!isPasswordValid) return { errors: 'Invalid email or password', code: 401 };
 
-        const longToken = this.tokenManager.genLongToken({userId: user.id, userKey: user.email, role: user.role });
+        const longToken = this.tokenManager.genLongToken({ userId: user.id, role: user.role, schoolId: user.schoolId });
 
         return { user: user, token: longToken, message: 'Login successful'};
     }
@@ -80,7 +80,7 @@ module.exports = class User {
         return { user: user, message: 'Password changed successfully' };
     }
 
-    async manageUserById({  __longToken, __params, email, firstName, lastName, status, schoolId}){
+    async manageUserById({ __longToken, __userScope, __params, email, firstName, lastName, status, schoolId }){
         let result = await this.validators.user.manageUserById({ id: __params.id, email, firstName, lastName, status, schoolId });
         if(result) return { errors: result };
 
@@ -95,5 +95,21 @@ module.exports = class User {
 
         await user.save();
         return { user: user, message: 'User updated successfully' };
+    }
+
+    async assignAdminToSchool({ __params, __longToken, schoolId }){
+        const id = __params.id;
+        let result = await this.validators.user.assignAdminToSchool(__params);
+        if(result) return { errors: result };
+
+        const school = await this.mongomodels.school.findById(schoolId);
+        if(!school) return { errors: 'School not found', code: 404 };
+
+        const user = await this.mongomodels.user.findById(id);
+        if(!user) return { errors: 'User not found', code: 404 };
+
+        user.schoolId = school.id;
+        await user.save();
+        return { user: user, message: 'Admin assigned to school successfully' };
     }
 }

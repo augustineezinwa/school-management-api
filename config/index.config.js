@@ -25,6 +25,7 @@ const LONG_TOKEN_SECRET                = process.env.LONG_TOKEN_SECRET || null;
 const SHORT_TOKEN_SECRET               = process.env.SHORT_TOKEN_SECRET || null;
 const NACL_SECRET                      = process.env.NACL_SECRET || null;                
 config.rbacPolicy                      = require('../static_arch/rbac.policy');
+config.routesConfig                    = require('./routes.config');
 
 if(!LONG_TOKEN_SECRET || !SHORT_TOKEN_SECRET || !NACL_SECRET || !MONGO_URI) {
     throw Error('missing .env variables check index.config');
