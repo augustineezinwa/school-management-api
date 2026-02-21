@@ -6,7 +6,7 @@ module.exports = {
 
     "school.getSchools": {
       auth: "__longToken",
-      allowedRoles: ["super_admin", "school_admin"]
+      allowedRoles: ["super_admin"]
     },
 
     "school.getSchoolById": {
