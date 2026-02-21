@@ -27,10 +27,23 @@ module.exports = {
         type: 'string',
         length: {min: 3, max: 20},
     },
+    token: {
+        path: 'token',
+        type: 'string',
+        length: {min: 10, max: 400},
+        required: true,
+    },  
+    userId: {
+        path: 'userId',
+        type: 'string',
+        length: {min: 24, max: 24},
+        required: true,
+    },
     password: {
         path: 'password',
         type: 'string',
         length: {min: 8, max: 100},
+        required: true,
     },
     email: {
         path: "email",

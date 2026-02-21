@@ -8,6 +8,7 @@ const ValidatorsLoader      = require('./ValidatorsLoader');
 const ResourceMeshLoader    = require('./ResourceMeshLoader');
 const utils                 = require('../libs/utils');
 const serializers           = require('../libs/serializers');
+const guard             = require('../libs/guard');
 
 const systemArch            = require('../static_arch/main.system');
 const TokenManager          = require('../managers/token/Token.manager');
@@ -43,6 +44,7 @@ module.exports = class ManagersLoader {
             mongomodels: this.mongomodels,
             resourceNodes: this.resourceNodes,
             serializers,
+            guard,
         };
         
     }

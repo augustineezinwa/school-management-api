@@ -96,6 +96,7 @@ module.exports = class School {
                 code: 404 
                }
              }
+             await this.mongomodels.user.updateMany({ schoolId: school.id }, { schoolId: null }).session(session);
              await this.mongomodels.student.deleteMany({ schoolId: school.id }).session(session);
              await this.mongomodels.classroom.deleteMany({ schoolId: school.id }).session(session);
              await this.mongomodels.school.deleteOne({ id: school.id }).session(session);
@@ -133,6 +134,22 @@ module.exports = class School {
 
         await school.save();
         return { school: school };
+    }
+
+    async assignAdminToSchool({ __params, userId }){
+        const id = __params.id;
+        let result = await this.validators.school.assignAdminToSchool({ id, userId });
+        if(result) return { errors: result };
+
+        const school = await this.mongomodels.school.findById(id);
+        if(!school) return { errors: 'School not found', code: 404 };
+
+        const user = await this.mongomodels.user.findById(userId);
+        if(!user) return { errors: 'User not found', code: 404 };
+
+        user.schoolId = school.id;
+        await user.save();
+        return { user: user, message: 'Admin assigned to school successfully' };
     }
 
 }

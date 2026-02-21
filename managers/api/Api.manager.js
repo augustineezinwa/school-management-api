@@ -11,8 +11,9 @@ module.exports = class ApiHandler {
      * @param {string} prop with key to scan for exposed methods
      */
 
-    constructor({utils, config, cortex, cache, managers, mwsRepo, prop}){
+    constructor({guard, utils, config, cortex, cache, managers, mwsRepo, prop}){
         this.utils         = utils;
+        this.guard         = guard;
         this.config        = config;
         this.cache         = cache; 
         this.cortex        = cortex;
@@ -154,6 +155,15 @@ module.exports = class ApiHandler {
         let hotBolt = this.mwsExec.createBolt({stack: targetStack, req, res, onDone: async ({req, res, results})=>{
 
             /** executed after all middleware finished */
+            const policyKey = `${moduleName}.${fnName}`;
+            const policy = this.config.rbacPolicy[policyKey];
+
+            if (policy) {
+                const authz = await this.guard.authorize({ policy, results, managers: this.managers, body: req.body || {}, params: req.params || {}, });
+                if (!authz.ok) {
+                    return this.managers.responseDispatcher.dispatch(res, { ok: false, code: authz.code || 403, message: authz.error || "forbidden" });
+                }
+            }
 
             let body = req.body || {};
             let result = await this._exec({targetModule: this.managers[moduleName], fnName, data: {

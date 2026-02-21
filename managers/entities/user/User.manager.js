@@ -8,7 +8,7 @@ module.exports = class User {
         this.tokenManager        = managers.token;
         this.usersCollection     = "users";
         this.userExposed         = [];
-        this.httpExposed          = ['post=createUser'];
+        this.httpExposed          = ['post=createUser', 'post=login', 'patch=changePassword', 'patch=manageUserById'];
         this.userRole           = 'school_admin';
         this.userStatus         = 'active';
 
@@ -24,7 +24,7 @@ module.exports = class User {
         this.serialize = serializers.createSerializer(this.fieldExposed);
     }
 
-    async createUser({email, password, firstName, lastName, schoolId}){
+    async createUser({ __longToken, email, password, firstName, lastName, schoolId}){
         const user = {email, password, firstName, lastName, role: this.userRole, schoolId };
        
 
@@ -46,4 +46,54 @@ module.exports = class User {
         };
     }
 
+    async login({ email, password }){
+        let result = await this.validators.user.login({ email, password });
+        if(result) return { errors: result };
+
+        const user = await this.mongomodels.user.findOne({ email });
+        if(!user) return { errors: 'Invalid email or password', code: 401 };
+
+        const isPasswordValid = await this.tokenManager.comparePassword(password, user.password);
+        if(!isPasswordValid) return { errors: 'Invalid email or password', code: 401 };
+
+        const longToken = this.tokenManager.genLongToken({userId: user.id, userKey: user.email, role: user.role });
+
+        return { user: user, token: longToken, message: 'Login successful'};
+    }
+
+    async changePassword({ __headers, __longToken, password, newPassword}){
+        let result = await this.validators.user.changePassword({ token: __headers.token, password, newPassword });
+        if(result) return { errors: result };
+
+        let decoded = this.tokenManager.verifyLongToken({token: __headers.token});
+        if(!decoded) return { errors: 'Unauthorized', code: 401 };
+
+        const user = await this.mongomodels.user.findById(decoded.userId);
+        if(!user) return { errors: 'Unauthorized', code: 401 };
+
+        const isPasswordValid = await this.tokenManager.comparePassword(password, user.password);
+        if(!isPasswordValid) return { errors: 'old password is incorrect', code: 401 };
+
+        const newHashedPassword = await this.tokenManager.hashPassword(newPassword);
+        user.password = newHashedPassword;
+        await user.save();
+        return { user: user, message: 'Password changed successfully' };
+    }
+
+    async manageUserById({  __longToken, __params, email, firstName, lastName, status, schoolId}){
+        let result = await this.validators.user.manageUserById({ id: __params.id, email, firstName, lastName, status, schoolId });
+        if(result) return { errors: result };
+
+        const user = await this.mongomodels.user.findById(__params.id);
+        if(!user) return { errors: 'User not found', code: 404 };
+
+        user.email = email || user.email;
+        user.firstName = firstName || user.firstName;
+        user.lastName = lastName || user.lastName;
+        user.status = status || user.status;
+        user.schoolId = schoolId || user.schoolId;
+
+        await user.save();
+        return { user: user, message: 'User updated successfully' };
+    }
 }

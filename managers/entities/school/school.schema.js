@@ -141,4 +141,14 @@ module.exports = {
             required: true,
         },
     ],
+    assignAdminToSchool: [
+        {
+            model: 'id',
+            required: true,
+        },
+        {
+            model: 'userId',
+            required: true,
+        },
+    ],
 }
