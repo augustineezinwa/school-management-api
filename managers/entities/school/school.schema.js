@@ -131,17 +131,13 @@ module.exports = {
     ],
     getSchoolById: [
         {
-            path: 'id',
-            type: 'string',
-            length: {min: 1, max: 50},
+            model: 'id',
             required: true,
         },
     ],
     deleteSchoolById: [
         {
-            path: 'id',
-            type: 'string',
-            length: {min: 1, max: 50},
+            model: 'id',
             required: true,
         },
     ],

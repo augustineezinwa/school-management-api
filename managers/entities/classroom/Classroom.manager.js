@@ -9,14 +9,17 @@ module.exports = class ClassRoom {
         this.tokenManager        = managers.token;
         this.classroomsCollection     = "classrooms";
         this.classroomExposed         = [];
-        this.httpExposed          = ['post=createClassroom', 'patch=manageClassroomById' ];
+        this.httpExposed          = ['post=createClassroom', 'patch=manageClassroomById', 'get=getClassroomsBySchoolId', 'delete=deleteClassroomById'];
         this.classroomStatus         = 'active';
         this.fieldExposed = {
             default: {
                 classroom: ["_id", "name", "level", "capacity", "status", "numberOfDesks", "numberOfComputers", "hasProjector", "schoolId", "createdAt", "updatedAt"]
             },
-            createClassRoom: {
+            createClassroom: {
                 classroom: ["_id", "name", "level", "capacity", "status", "numberOfDesks", "numberOfComputers", "hasProjector", "schoolId", "createdAt", "updatedAt"]
+            },
+            getClassroomsBySchoolId: {
+                classrooms: ["_id", "name", "level", "capacity", "status", "numberOfDesks", "numberOfComputers", "hasProjector", "schoolId", "createdAt", "updatedAt"]
             }
         };
         this.serialize = serializers.createSerializer(this.fieldExposed);    }
@@ -35,9 +38,10 @@ module.exports = class ClassRoom {
         };
     }
 
-    async manageClassroomById({ __params, capacity, numberOfDesks, numberOfComputers, hasProjector }){
+    async manageClassroomById({ __params, capacity, numberOfDesks, numberOfComputers, hasProjector, status }){
         const id = __params.id;
-        if(!id) return { errors: 'Classroom ID is required' };
+        let result = await this.validators.classroom.manageClassroomById(__params);
+        if(result) return { errors: result };
 
         const classroom = await this.mongomodels.classroom.findById(id);
         if(!classroom) return { errors: 'Classroom not found', code: 404 };
@@ -46,15 +50,55 @@ module.exports = class ClassRoom {
         classroom.numberOfDesks = numberOfDesks || classroom.numberOfDesks;
         classroom.numberOfComputers = numberOfComputers || classroom.numberOfComputers;
         classroom.hasProjector = hasProjector || classroom.hasProjector;
+        classroom.status = status || classroom.status;
 
         // Data validation
-        let result = await this.validators.classroom.manageClassroomById(classroom);
+        result = await this.validators.classroom.manageClassroomById(classroom);
         if(result) return { errors: result };
 
         await classroom.save();
         return {
             classroom: classroom, 
         };
+    }
+
+    async getClassroomsBySchoolId({ __params}) {
+       let result = await this.validators.classroom.getClassroomsBySchoolId(__params);
+       if(result) return { errors: result };
+
+       const classrooms = await this.mongomodels.classroom.find({ schoolId: __params.schoolId });
+       return {
+        classrooms: classrooms,
+       };
+    }
+
+    async deleteClassroomById({ __params}) {
+        const id = __params.id;
+
+        // Data validation
+        let result = await this.validators.classroom.deleteClassroomById(__params);
+        if(result) return { errors: result };
+
+        const session = await this.mongomodels.classroom.startSession();
+        try {
+            session.startTransaction();
+            const classroom = await this.mongomodels.classroom.findById(id);
+
+            if(!classroom){ 
+                await session.abortTransaction();
+                return { errors: 'Classroom not found', code: 404 };
+            }
+
+            await this.mongomodels.student.deleteMany({ classroomId: classroom.id }).session(session);
+            await this.mongomodels.classroom.deleteOne({ id: classroom.id }).session(session);
+            await session.commitTransaction();
+            return { classroom: classroom, message: 'Classroom deleted successfully', code: 204 };
+        } catch (error) {
+            await session.abortTransaction();
+            return { errors: 'Failed to delete classroom', code: 500, details: error.message };
+        } finally {
+            session.endSession();
+        }
     }
 
 }

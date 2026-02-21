@@ -84,16 +84,36 @@ module.exports = class School {
         let result = await this.validators.school.deleteSchoolById(__params);
         if(result) return { errors: result };
 
-        const school = await this.mongomodels.school.findByIdAndDelete(id);
-        if(!school) return { errors: 'School not found', code: 404 };
-        return {
-            school: school, 
-        };
+        const session = await this.mongomodels.school.startSession();
+        
+        try {
+            session.startTransaction();
+            const school = await this.mongomodels.school.findById(id);
+            if(!school){ 
+                await session.abortTransaction();
+                return { 
+                errors: 'School not found', 
+                code: 404 
+               }
+             }
+             await this.mongomodels.student.deleteMany({ schoolId: school.id }).session(session);
+             await this.mongomodels.classroom.deleteMany({ schoolId: school.id }).session(session);
+             await this.mongomodels.school.deleteOne({ id: school.id }).session(session);
+
+            await session.commitTransaction();
+            return { school: school, message: 'School deleted successfully', code: 204 };
+        } catch (error) {
+            await session.abortTransaction();
+            return { errors: 'Failed to delete school', code: 500, details: error.message };
+        } finally {
+            session.endSession();
+        }
     }
 
     async updateSchoolProfile({ __params, name, email, phone, address, website, motto, establishedYear, imageUrl }){
         const id = __params.id;
-        if(!id) return { errors: 'School ID is required' };
+        let result = await this.validators.school.getSchoolById(__params);
+        if(result) return { errors: result };
 
         const school = await this.mongomodels.school.findById(id);
         if(!school) return { errors: 'School not found', code: 404 };
@@ -108,7 +128,7 @@ module.exports = class School {
         school.imageUrl = imageUrl || school.imageUrl;
 
         // Data validation
-        let result = await this.validators.school.updateSchoolProfile(school);
+        result = await this.validators.school.updateSchoolProfile(school);
         if(result) return { errors: result };
 
         await school.save();

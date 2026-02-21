@@ -50,15 +50,28 @@ module.exports = {
         {
             path: 'numberOfComputers',
             type: 'number',
-            required: true,
-            default: 0,
             required: false,
+            default: 0,
         },
         {
             path: 'hasProjector',
             type: 'boolean',
             required: false,
             default: false,
-        }
-    ]
+        },
+        {
+            model: 'status',
+            required: false,
+        },
+        {
+            model: 'id',
+            required: true,
+        },
+    ],
+    deleteClassroomById: [
+        {
+            model: 'id',
+            required: true,
+        },
+    ],
 }

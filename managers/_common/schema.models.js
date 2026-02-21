@@ -4,8 +4,8 @@ module.exports = {
     id: {
         path: "id",
         type: "string",
-        length: { min: 1, max: 50 },
-    },
+        length: {min: 24, max: 24},
+      },
     gender: {
         path: 'gender',
         type: 'string',
@@ -56,12 +56,12 @@ module.exports = {
     schoolId: {
         path: 'schoolId',
         type: 'string',
-        length: {min: 1, max: 50},
+        length: {min: 24, max: 50},
     },
     classroomId: {
         path: 'classroomId',
         type: 'string',
-        length: {min: 1, max: 50},
+        length: {min: 24, max: 50},
     },
     title: {
         path: 'title',

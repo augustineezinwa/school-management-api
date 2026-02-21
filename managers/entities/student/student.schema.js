@@ -74,4 +74,18 @@ module.exports = {
             required: true,
         },
     ],
+    transferStudent: [
+        {
+            model: 'classroomId',
+            required: true,
+        },
+        {
+            model: 'schoolId',
+            required: true,
+        },
+        {
+            model: 'id',
+            required: true,
+        }
+    ],
 }
