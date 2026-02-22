@@ -1,11 +1,10 @@
 function getMongoModels(managers) {
-    return (
-        managers?.school?.mongomodels ||
-        managers?.student?.mongomodels ||
-        managers?.classroom?.mongomodels ||
-        managers?.user?.mongomodels ||
-        null
-    );
+    return {
+        ...(managers?.school?.mongomodels || {}),
+        ...(managers?.student?.mongomodels || {}),
+        ...(managers?.classroom?.mongomodels || {}),
+        ...(managers?.user?.mongomodels || {}),
+    };
 }
 
 async function resolveSchoolId({ resolver, context, managers, utils }) {
