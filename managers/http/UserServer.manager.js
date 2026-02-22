@@ -1,7 +1,7 @@
 const http              = require('http');
 const express           = require('express');
 const cors              = require('cors');
-const rateLimit         = require('express-rate-limit');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const requestIp         = require('request-ip');
 const swaggerUi         = require('swagger-ui-express');
 const openApiSpec       = require('../../config/openapi.config');
@@ -61,7 +61,7 @@ module.exports = class UserServer {
             max: rateLimitMax,
             standardHeaders: true,
             legacyHeaders: false,
-            keyGenerator: (req) => requestIp.getClientIp(req) || req.ip || 'unknown',
+            keyGenerator: (req, res) => ipKeyGenerator(requestIp.getClientIp(req) || req.ip || 'unknown'),
             message: { ok: false, message: 'Too many requests from this IP, please try again later.' },
             handler: (req, res, next, options) => {
                 res.status(429).json(options.message);
