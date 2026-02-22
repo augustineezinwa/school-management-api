@@ -1,3 +1,4 @@
+require("dotenv").config();
 const routesConfig = require("./routes.config");
 
 function expressPathToOpenApi(path) {
@@ -279,7 +280,7 @@ const endpointDocs = {
     "token.v1_createShortToken": {
         summary: "Create short token from long token",
         tags: ["Auth"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: { shortToken: { type: "string" } },
@@ -309,7 +310,7 @@ const endpointDocs = {
     "user.createUser": {
         summary: "Create user",
         tags: ["Users"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { user: { $ref: "#/components/schemas/User" } } },
         successExample: { user: componentExamples.user },
         requestBody: {
@@ -345,7 +346,7 @@ const endpointDocs = {
     "user.changePassword": {
         summary: "Change current user password",
         tags: ["Users"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: {
@@ -378,7 +379,7 @@ const endpointDocs = {
     "user.manageUserById": {
         summary: "Update user profile by id",
         tags: ["Users"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: {
@@ -413,7 +414,7 @@ const endpointDocs = {
     "user.assignAdminToSchool": {
         summary: "Assign admin to school",
         tags: ["Users"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: {
@@ -444,7 +445,7 @@ const endpointDocs = {
     "school.createSchool": {
         summary: "Create school",
         tags: ["Schools"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { school: { $ref: "#/components/schemas/School" } } },
         successExample: { school: componentExamples.school },
         requestBody: {
@@ -485,7 +486,7 @@ const endpointDocs = {
     "school.getSchools": {
         summary: "List schools",
         tags: ["Schools"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: { schools: { type: "array", items: { $ref: "#/components/schemas/School" } } },
@@ -496,7 +497,7 @@ const endpointDocs = {
     "school.getSchoolById": {
         summary: "Get school by id",
         tags: ["Schools"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { school: { $ref: "#/components/schemas/School" } } },
         successExample: { school: componentExamples.school },
         parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
@@ -505,7 +506,7 @@ const endpointDocs = {
     "school.updateSchoolById": {
         summary: "Update school by id",
         tags: ["Schools"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { school: { $ref: "#/components/schemas/School" } } },
         successExample: { school: { ...componentExamples.school, name: "Updated School Name" } },
         parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
@@ -545,7 +546,7 @@ const endpointDocs = {
     "school.deleteSchoolById": {
         summary: "Delete school by id",
         tags: ["Schools"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: {
@@ -561,7 +562,7 @@ const endpointDocs = {
     "school.updateSchoolProfile": {
         summary: "Update school profile (partial update)",
         tags: ["Schools"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { school: { $ref: "#/components/schemas/School" } } },
         successExample: { school: { ...componentExamples.school, motto: "Excellence Always" } },
         parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
@@ -600,7 +601,7 @@ const endpointDocs = {
     "classroom.createClassroom": {
         summary: "Create classroom",
         tags: ["Classrooms"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { classroom: { $ref: "#/components/schemas/Classroom" } } },
         successExample: { classroom: componentExamples.classroom },
         requestBody: {
@@ -637,7 +638,7 @@ const endpointDocs = {
     "classroom.manageClassroomById": {
         summary: "Update classroom by id",
         tags: ["Classrooms"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { classroom: { $ref: "#/components/schemas/Classroom" } } },
         successExample: { classroom: { ...componentExamples.classroom, capacity: 50 } },
         parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
@@ -670,7 +671,7 @@ const endpointDocs = {
     "classroom.getClassroomsBySchoolId": {
         summary: "List classrooms by school id",
         tags: ["Classrooms"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: { classrooms: { type: "array", items: { $ref: "#/components/schemas/Classroom" } } },
@@ -682,7 +683,7 @@ const endpointDocs = {
     "classroom.deleteClassroomById": {
         summary: "Delete classroom by id",
         tags: ["Classrooms"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: {
@@ -698,7 +699,7 @@ const endpointDocs = {
     "student.enrollStudent": {
         summary: "Enroll student",
         tags: ["Students"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { student: { $ref: "#/components/schemas/Student" } } },
         successExample: { student: componentExamples.student },
         requestBody: {
@@ -735,7 +736,7 @@ const endpointDocs = {
     "student.getStudents": {
         summary: "List students",
         tags: ["Students"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: { students: { type: "array", items: { $ref: "#/components/schemas/Student" } } },
@@ -746,7 +747,7 @@ const endpointDocs = {
     "student.getStudentById": {
         summary: "Get student by id",
         tags: ["Students"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { student: { $ref: "#/components/schemas/Student" } } },
         successExample: { student: componentExamples.student },
         parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
@@ -755,7 +756,7 @@ const endpointDocs = {
     "student.updateStudentProfileById": {
         summary: "Update student profile by id",
         tags: ["Students"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { student: { $ref: "#/components/schemas/Student" } } },
         successExample: { student: { ...componentExamples.student, firstName: "Jane" } },
         parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
@@ -791,7 +792,7 @@ const endpointDocs = {
     "student.deleteStudentById": {
         summary: "Delete student by id",
         tags: ["Students"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: {
@@ -807,7 +808,7 @@ const endpointDocs = {
     "student.transferStudent": {
         summary: "Transfer student to another classroom/school",
         tags: ["Students"],
-        security: [{ bearerAuth: [] }],
+        security: [{ apiKeyAuth: [] }],
         successDataSchema: {
             type: "object",
             properties: {
@@ -871,7 +872,7 @@ module.exports = {
         version: "1.0.0",
         description: "Exhaustive route documentation generated from routes config and manager contracts.",
     },
-    servers: [{ url: "http://localhost:5111", description: "Local server" }],
+    servers: [{ url: `http://localhost:${process.env.USER_PORT}`, description: "Local server" }],
     tags: [
         { name: "Auth" },
         { name: "Users" },
@@ -882,12 +883,12 @@ module.exports = {
     ],
     components: {
         securitySchemes: {
-            bearerAuth: {
-                type: "http",
-                scheme: "bearer",
-                bearerFormat: "JWT",
-            },
-        },
+            apiKeyAuth: {
+              type: "apiKey",
+              in: "header",
+              name: "token"
+            }
+          },
         schemas: componentSchemas,
     },
     paths,

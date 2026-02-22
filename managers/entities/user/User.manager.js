@@ -56,6 +56,8 @@ module.exports = class User {
         const isPasswordValid = await this.tokenManager.comparePassword(password, user.password);
         if(!isPasswordValid) return { errors: 'Invalid email or password', code: 401 };
 
+        if(user.status !== 'active') return { errors: 'Unauthorized', code: 401 };
+
         const longToken = this.tokenManager.genLongToken({ userId: user.id, role: user.role, schoolId: user.schoolId });
 
         return { user: user, token: longToken, message: 'Login successful'};

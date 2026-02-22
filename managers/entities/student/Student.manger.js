@@ -32,7 +32,7 @@ module.exports = class Student {
         let result = await this.validators.student.enrollStudent(student);
         if(result) return { errors: result };
 
-        const classroom = await this.mongomodels.classroom.findOne({ id: classroomId, schoolId });
+        const classroom = await this.mongomodels.classroom.findOne({ _id: classroomId, schoolId });
         if(!classroom) return { errors: 'Classroom not found', code: 404 };
 
         // check capacity
@@ -106,7 +106,7 @@ module.exports = class Student {
         return {
             student: student, 
             message: 'Student deleted successfully',
-            code: 204
+            code: 200
         };
     }
 
@@ -121,7 +121,7 @@ module.exports = class Student {
         const school = await this.mongomodels.school.findById(schoolId);
         if(!school) return { errors: 'School not found', code: 404 };
 
-        const classroom = await this.mongomodels.classroom.findOne({ schoolId, id: classroomId });
+        const classroom = await this.mongomodels.classroom.findOne({ schoolId, _id: classroomId });
         if(!classroom) return { errors: 'Classroom not found', code: 404 };
 
         // check capacity
@@ -129,10 +129,6 @@ module.exports = class Student {
 
         student.classroomId = classroom.id;
         student.schoolId = school.id;
-
-        // Data validation
-        result = await this.validators.student.transferStudent(student);
-        if(result) return { errors: result };
 
         await student.save();
         return {

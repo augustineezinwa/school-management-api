@@ -12,8 +12,6 @@ module.exports = {
     "school.getSchoolById": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school",
-      action: "read",
       scope: "school",
       nodeId: { schoolIdPath: "params.id" }
     },
@@ -31,8 +29,6 @@ module.exports = {
     "school.updateSchoolProfile": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school",
-      action: "config",
       scope: "school",
       nodeId: { schoolIdPath: "params.id" }
     },
@@ -67,8 +63,6 @@ module.exports = {
     "classroom.createClassroom": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school.classroom",
-      action: "create",
       scope: "school",
       nodeId: { schoolIdPath: "body.schoolId" }
     },
@@ -76,8 +70,6 @@ module.exports = {
     "classroom.manageClassroomById": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school.classroom",
-      action: "config",
       scope: "school",
       nodeId: { resourceType: "classroom", resourceIdPath: "params.id" }
     },
@@ -85,8 +77,6 @@ module.exports = {
     "classroom.getClassroomsBySchoolId": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school.classroom",
-      action: "read",
       scope: "school",
       nodeId: { schoolIdPath: ["params.schoolId", "params.id"] }
     },
@@ -94,8 +84,6 @@ module.exports = {
     "classroom.deleteClassroomById": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school.classroom",
-      action: "config",
       scope: "school",
       nodeId: { resourceType: "classroom", resourceIdPath: "params.id" }
     },
@@ -103,8 +91,6 @@ module.exports = {
     "student.enrollStudent": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school.classroom.student",
-      action: "create",
       scope: "school",
       nodeId: { schoolIdPath: "body.schoolId" }
     },
@@ -117,8 +103,6 @@ module.exports = {
     "student.getStudentById": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school.classroom.student",
-      action: "read",
       scope: "school",
       nodeId: { resourceType: "student", resourceIdPath: "params.id" }
     },
@@ -126,8 +110,6 @@ module.exports = {
     "student.updateStudentProfileById": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school.classroom.student",
-      action: "config",
       scope: "school",
       nodeId: { resourceType: "student", resourceIdPath: "params.id" }
     },
@@ -135,8 +117,6 @@ module.exports = {
     "student.deleteStudentById": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school.classroom.student",
-      action: "config",
       scope: "school",
       nodeId: { resourceType: "student", resourceIdPath: "params.id" }
     },
@@ -144,8 +124,6 @@ module.exports = {
     "student.transferStudent": {
       auth: "__longToken",
       allowedRoles: ["super_admin", "school_admin"],
-      layer: "school.classroom.student",
-      action: "config",
       scope: "school",
       nodeId: { schoolIdPath: "body.schoolId" },
       fromNodeId: { resourceType: "student", resourceIdPath: "params.id" }

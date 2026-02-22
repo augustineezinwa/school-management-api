@@ -20,6 +20,9 @@ module.exports = class School {
             },
             updateSchoolById: {
                 school: ["_id", "name", "slug", "email", "phone", "address", "website", "motto", "establishedYear", "imageUrl", "status", "createdAt", "updatedAt"]
+            },
+            getSchools: {
+                schools: ["_id", "name", "slug", "email", "phone", "address", "website", "motto", "establishedYear", "imageUrl", "status", "createdAt", "updatedAt"]
             }
         };
         this.serialize = serializers.createSerializer(this.fieldExposed);
@@ -77,35 +80,46 @@ module.exports = class School {
         };
     }
 
-    async deleteSchoolById({ __longToken, __params }){
+    async deleteSchoolById({ __longToken, __params }) {
         const id = __params.id;
-
-        // Data validation
-        let result = await this.validators.school.deleteSchoolById(__params);
-        if(result) return { errors: result };
-
+    
+        // Validate
+        const result = await this.validators.school.deleteSchoolById(__params);
+        if (result) return { errors: result };
+    
         const session = await this.mongomodels.school.startSession();
-        
+    
         try {
             session.startTransaction();
-            const school = await this.mongomodels.school.findById(id);
-            if(!school){ 
+            const school = await this.mongomodels.school.findById(id).session(session);
+    
+            if (!school) {
                 await session.abortTransaction();
-                return { 
-                errors: 'School not found', 
-                code: 404 
-               }
-             }
-             await this.mongomodels.user.updateMany({ schoolId: school.id }, { schoolId: null }).session(session);
-             await this.mongomodels.student.deleteMany({ schoolId: school.id }).session(session);
-             await this.mongomodels.classroom.deleteMany({ schoolId: school.id }).session(session);
-             await this.mongomodels.school.deleteOne({ id: school.id }).session(session);
-
+                return {
+                    errors: 'School not found',
+                    code: 404
+                };
+            }
+    
+            await this.mongomodels.user.updateMany({ schoolId: school._id }, { schoolId: null }, { session });
+            await this.mongomodels.student.deleteMany({ schoolId: school._id }, { session });
+            await this.mongomodels.classroom.deleteMany({ schoolId: school._id }, { session });
+            await this.mongomodels.school.deleteOne({ _id: school._id }, { session });
             await session.commitTransaction();
-            return { school: school, message: 'School deleted successfully', code: 204 };
+    
+            return {
+                message: 'School deleted successfully',
+                code: 200
+            };
+    
         } catch (error) {
+            console.error(error);
             await session.abortTransaction();
-            return { errors: 'Failed to delete school', code: 500, details: error.message };
+            return {
+                errors: 'Failed to delete school',
+                code: 500,
+                details: error.message
+            };
         } finally {
             session.endSession();
         }

@@ -74,4 +74,10 @@ module.exports = {
             required: true,
         },
     ],
+    getClassroomsBySchoolId: [
+        {
+            model: 'schoolId',
+            required: true,
+        },
+    ],
 }
