@@ -10,7 +10,9 @@
     "migrate:create": "migrate-mongo create",
     "migrate:status": "migrate-mongo status",
     "test": "jest --runInBand --testPathPattern=managers/entities/.*/tests/.*\\.test\\.js",
-    "test:integration": "jest --runInBand --testPathPattern=managers/entities/.*/tests/.*\\.test\\.js"
+    "test:integration": "jest --runInBand --testPathPattern=managers/entities/.*/tests/.*\\.test\\.js",
+    "start": "node index.js",
+    "build": "npm run migrate:up && npm run sync"
   },
   "author": "",
   "license": "ISC",
