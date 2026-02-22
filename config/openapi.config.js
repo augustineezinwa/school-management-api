@@ -711,7 +711,7 @@ const endpointDocs = {
         responses: { 200: { description: "Classroom created" }, ...buildCommonResponses({ include409: true }) },
     },
     "classroom.manageClassroomById": {
-        summary: "Update classroom by id",
+        summary: "Update classroom by id (manage classroom resources and capacity)",
         tags: ["Classrooms"],
         security: [{ apiKeyAuth: [] }],
         successDataSchema: { type: "object", properties: { classroom: { $ref: "#/components/schemas/Classroom" } } },
