@@ -265,6 +265,21 @@ tests/            # Integration test helpers
 
 ---
 
+## Authentication Flow
+
+Super admin can login using the auth/login endpoint with credentials in .env file
+They receive a token on login, token is stored in headers, uses this to access other endpoints
+
+Super admin can create users (school admins) and assign them to schools
+
+School admins can login using the auth/login endpoint, they also receive a token
+recieved token is used to access protected endpoints like managing classes and their students
+
+Super admin can block school admins access by setting them as inactive
+Super admin has super access
+
+---
+
 ## Improvements
 
 The API is built with **REST best practices** in mind:
