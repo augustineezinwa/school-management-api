@@ -872,7 +872,7 @@ module.exports = {
         version: "1.0.0",
         description: "Exhaustive route documentation generated from routes config and manager contracts.",
     },
-    servers: [{ url: `http://localhost:${process.env.USER_PORT}`, description: "Local server" }],
+    servers: [{ url: `http://localhost:${process.env.USER_PORT}`, description: "Local server" }, { url: `https://school-management-api-mjci.onrender.com`, description: "Web server" }],
     tags: [
         { name: "Auth" },
         { name: "Users" },
