@@ -16,7 +16,7 @@ const SharkFin              = require('../managers/shark_fin/SharkFin.manager');
 const TimeMachine           = require('../managers/time_machine/TimeMachine.manager');
 const UserManager           = require('../managers/entities/user/User.manager');
 const SchoolManager         = require('../managers/entities/school/School.manager');
-const ClassRoomManager      = require('../managers/entities/classroom/ClassRoom.manager');
+const ClassRoomManager      = require('../managers/entities/classroom/Classroom.manager');
 const StudentManager        = require('../managers/entities/student/Student.manger');
 const MongoLoader           = require('./MongoLoader');
 /** 

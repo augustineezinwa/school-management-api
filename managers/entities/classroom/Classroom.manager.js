@@ -1,4 +1,4 @@
-module.exports = class ClassRoom { 
+module.exports = class Classroom { 
 
     constructor({utils, cache, config, cortex, managers, validators, mongomodels, serializers }={}){
         this.config              = config;
