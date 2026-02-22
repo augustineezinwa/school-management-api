@@ -36,6 +36,8 @@ REST API for managing schools, classrooms, students, and users with role-based a
   - Rate limiting per IP on `/api` (configurable)
   - Request validation and consistent error responses
 
+- **Database Design Doc** : visit [here](https://drive.google.com/file/d/1I48knQgpjD_9XiL50WUjv1nhdek79ja4/view?usp=sharing)
+
 ---
 
 ## Prerequisites
