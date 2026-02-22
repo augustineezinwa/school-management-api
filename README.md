@@ -137,6 +137,15 @@ cp .env.example .env
 
 Use the **token** header (or query) with a JWT from `/api/auth/login` for protected endpoints.
 
+To test on the live hosted swagger API doc: visit this [page](https://school-management-api-mjci.onrender.com/api/docs)
+
+Select the web server from the servers dropdown
+get your super admin credentials from .env.example
+use the email & password to login
+
+you will receive a token, set this token on authorize button at the top right
+You can now test all protected routes
+
 ---
 
 ## Endpoints
