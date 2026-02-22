@@ -63,10 +63,17 @@ cp .env.example .env
 ```
 
 Edit `.env` and set at least the **required** variables (see [Environment variables](#environment-variables) below).
+Most importantly set your `SUPER_USER_EMAIL` and `SUPER_USER_PASSWORD` to your preferred credentials
 
 ### 3. Start MongoDB
 
 Ensure MongoDB is running (e.g. local on `mongodb://localhost:27017` or use a connection string in `MONGO_URI`).
+
+Once Mongo is running, do
+```bash
+npm run build
+```
+to seed your super user.
 
 ### 4. Run the app
 
@@ -74,13 +81,7 @@ Ensure MongoDB is running (e.g. local on `mongodb://localhost:27017` or use a co
 npm start
 ```
 
-The API runs at `http://localhost:5111` by default. Open [API documentation](#api-documentation).
-
-### 5. (Optional) Run migrations
-
-```bash
-npm run migrate:up
-```
+The API runs at `http://localhost:9000` by default. Open [API documentation](#api-documentation).
 
 ---
 
@@ -92,9 +93,11 @@ Use `.env.example` as a template. After copying to `.env`, set:
 |----------|----------|---------|-------------|
 | `MONGO_URI` | Yes | `mongodb://localhost:27017/axion` | MongoDB connection string |
 | `LONG_TOKEN_SECRET` | Yes | — | Secret for JWT long-lived tokens (e.g. login) |
+| `SUPER_USER_EMAIL`   | Yes | - | Your super admin email  |
+| `SUPER_USER_PASSWORD` | Yes | - | Your super admin password |
 | `SHORT_TOKEN_SECRET` | Yes | — | Secret for short-lived tokens |
 | `NACL_SECRET` | Yes | — | Secret for encryption (NACL) |
-| `USER_PORT` | No | `5111` | HTTP server port |
+| `USER_PORT` | No | `9000` | HTTP server port |
 | `ENV` | No | `development` | `development`, `test`, or `production` |
 | `SERVICE_NAME` | No | `axion` | App name (used in logs and DB name if not in URI) |
 | `RATE_LIMIT_MAX` | No | `100` | Max requests per IP per window |
@@ -127,10 +130,10 @@ cp .env.example .env
 
 ## API documentation
 
-- **Swagger UI (interactive):** [http://localhost:5111/api/docs](http://localhost:5111/api/docs)  
+- **Swagger UI (interactive):** [http://localhost:9000/api/docs](http://localhost:9000/api/docs)  
   (Replace host/port if you changed `USER_PORT` or deploy elsewhere.)
 
-- **OpenAPI JSON:** [http://localhost:5111/api/docs.json](http://localhost:5111/api/docs.json)
+- **OpenAPI JSON:** [http://localhost:9000/api/docs.json](http://localhost:5111/api/docs.json)
 
 Use the **token** header (or query) with a JWT from `/api/auth/login` for protected endpoints.
 
@@ -145,7 +148,6 @@ Base path: **`/api`**
 | Method | Path | Description |
 |--------|------|-------------|
 | `POST` | `/auth/login` | Login (email + password), returns JWT |
-| `POST` | `/tokens/short` | Create short-lived token |
 
 ### Users
 
@@ -210,11 +212,6 @@ npm install
 npm test
 ```
 
-Or explicitly:
-
-```bash
-npm run test:integration
-```
 
 - **Pattern:** Tests live under `managers/entities/*/tests/*.test.js` (authorization, validation, functionality).
 - **Environment:** Set `ENV=test` (e.g. in `.env.test` or env); rate limiting is skipped in test.

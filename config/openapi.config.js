@@ -382,36 +382,6 @@ const endpointDocs = {
             ...buildCommonResponses({}),
         },
     },
-    "token.v1_createShortToken": {
-        summary: "Create short token from long token",
-        tags: ["Auth"],
-        security: [{ apiKeyAuth: [] }],
-        successDataSchema: {
-            type: "object",
-            properties: { shortToken: { type: "string" } },
-        },
-        successExample: { shortToken: "eyJhbGciOi..." },
-        responses: {
-            200: {
-                description: "Short token created",
-                content: {
-                    "application/json": {
-                        schema: buildSuccessEnvelopeSchema({
-                            type: "object",
-                            properties: { shortToken: { type: "string" } },
-                        }),
-                        example: {
-                            ok: true,
-                            data: { shortToken: "eyJhbGciOi..." },
-                            errors: [],
-                            message: "",
-                        },
-                    },
-                },
-            },
-            ...buildCommonResponses({}),
-        },
-    },
     "user.createUser": {
         summary: "Create user",
         tags: ["Users"],
@@ -989,11 +959,11 @@ module.exports = {
     components: {
         securitySchemes: {
             apiKeyAuth: {
-              type: "apiKey",
-              in: "header",
-              name: "token"
+                type: "apiKey",
+                in: "header",
+                name: "token"
             }
-          },
+        },
         schemas: componentSchemas,
     },
     paths,
