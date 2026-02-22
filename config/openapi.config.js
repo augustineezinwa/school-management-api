@@ -419,7 +419,7 @@ const endpointDocs = {
         },
     },
     "user.changePassword": {
-        summary: "Change current user password",
+        summary: "Change current logged in user password",
         tags: ["Users"],
         security: [{ apiKeyAuth: [] }],
         successDataSchema: {

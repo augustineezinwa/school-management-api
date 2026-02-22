@@ -32,6 +32,10 @@ module.exports = class Classroom {
         let result = await this.validators.classroom.createClassRoom(classroom);
         if (result) return { errors: result, code: 422 };
 
+        // check if school exists
+        const foundSchool = await this.mongomodels.school.findById(schoolId);
+        if (!foundSchool) return { errors: 'School not found', code: 404 };
+
         const classroomModel = this.mongomodels.classroom;
         const newClassroom = await classroomModel.create(classroom);
         return {
