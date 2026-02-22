@@ -1,16 +1,16 @@
-module.exports = class Classroom { 
+module.exports = class Classroom {
 
-    constructor({utils, cache, config, cortex, managers, validators, mongomodels, serializers }={}){
-        this.config              = config;
-        this.utils               = utils;
-        this.cortex              = cortex;
-        this.validators          = validators; 
-        this.mongomodels         = mongomodels;
-        this.tokenManager        = managers.token;
-        this.classroomsCollection     = "classrooms";
-        this.classroomExposed         = [];
-        this.httpExposed          = ['post=createClassroom', 'patch=manageClassroomById', 'get=getClassroomsBySchoolId', 'delete=deleteClassroomById'];
-        this.classroomStatus         = 'active';
+    constructor({ utils, cache, config, cortex, managers, validators, mongomodels, serializers } = {}) {
+        this.config = config;
+        this.utils = utils;
+        this.cortex = cortex;
+        this.validators = validators;
+        this.mongomodels = mongomodels;
+        this.tokenManager = managers.token;
+        this.classroomsCollection = "classrooms";
+        this.classroomExposed = [];
+        this.httpExposed = ['post=createClassroom', 'patch=manageClassroomById', 'get=getClassroomsBySchoolId', 'delete=deleteClassroomById'];
+        this.classroomStatus = 'active';
         this.fieldExposed = {
             default: {
                 classroom: ["_id", "name", "level", "capacity", "status", "numberOfDesks", "numberOfComputers", "hasProjector", "schoolId", "createdAt", "updatedAt"]
@@ -22,29 +22,30 @@ module.exports = class Classroom {
                 classrooms: ["_id", "name", "level", "capacity", "status", "numberOfDesks", "numberOfComputers", "hasProjector", "schoolId", "createdAt", "updatedAt"]
             }
         };
-        this.serialize = serializers.createSerializer(this.fieldExposed);    }
+        this.serialize = serializers.createSerializer(this.fieldExposed);
+    }
 
-    async createClassroom({ __longToken, __schoolScope, name, level, capacity, numberOfDesks, numberOfComputers, hasProjector, schoolId }){
-        const classroom = {name, level, capacity, numberOfDesks, numberOfComputers, hasProjector, schoolId };
-       
+    async createClassroom({ __longToken, __schoolScope, name, level, capacity, numberOfDesks, numberOfComputers, hasProjector, schoolId }) {
+        const classroom = { name, level, capacity, numberOfDesks, numberOfComputers, hasProjector, schoolId };
+
         // Data validation
         let result = await this.validators.classroom.createClassRoom(classroom);
-        if(result) return { errors: result, code: 422 };
+        if (result) return { errors: result, code: 422 };
 
         const classroomModel = this.mongomodels.classroom;
         const newClassroom = await classroomModel.create(classroom);
         return {
-            classroom: newClassroom, 
+            classroom: newClassroom,
         };
     }
 
-    async manageClassroomById({ __longToken, __schoolScope, __params, capacity, numberOfDesks, numberOfComputers, hasProjector, status }){
+    async manageClassroomById({ __longToken, __schoolScope, __params, capacity, numberOfDesks, numberOfComputers, hasProjector, status }) {
         const id = __params.id;
         let result = await this.validators.classroom.manageClassroomById(__params);
-        if(result) return { errors: result, code: 422 };
+        if (result) return { errors: result, code: 422 };
 
         const classroom = await this.mongomodels.classroom.findById(id);
-        if(!classroom) return { errors: 'Classroom not found', code: 404 };
+        if (!classroom) return { errors: 'Classroom not found', code: 404 };
 
         classroom.capacity = capacity || classroom.capacity;
         classroom.numberOfDesks = numberOfDesks || classroom.numberOfDesks;
@@ -54,22 +55,22 @@ module.exports = class Classroom {
 
         // Data validation
         result = await this.validators.classroom.manageClassroomById(classroom);
-        if(result) return { errors: result, code: 422 };
+        if (result) return { errors: result, code: 422 };
 
         await classroom.save();
         return {
-            classroom: classroom, 
+            classroom: classroom,
         };
     }
 
     async getClassroomsBySchoolId({ __longToken, __schoolScope, __params }) {
-       let result = await this.validators.classroom.getClassroomsBySchoolId(__params);
-       if(result) return { errors: result, code: 422 };
+        let result = await this.validators.classroom.getClassroomsBySchoolId(__params);
+        if (result) return { errors: result, code: 422 };
 
-       const classrooms = await this.mongomodels.classroom.find({ schoolId: __params.schoolId });
-       return {
-        classrooms: classrooms,
-       };
+        const classrooms = await this.mongomodels.classroom.find({ schoolId: __params.schoolId });
+        return {
+            classrooms: classrooms,
+        };
     }
 
     async deleteClassroomById({ __longToken, __schoolScope, __params }) {
@@ -77,14 +78,14 @@ module.exports = class Classroom {
 
         // Data validation
         let result = await this.validators.classroom.deleteClassroomById(__params);
-        if(result) return { errors: result, code: 422 };
+        if (result) return { errors: result, code: 422 };
 
         const session = await this.mongomodels.classroom.startSession();
         try {
             session.startTransaction();
             const classroom = await this.mongomodels.classroom.findById(id);
 
-            if(!classroom){ 
+            if (!classroom) {
                 await session.abortTransaction();
                 return { errors: 'Classroom not found', code: 404 };
             }
