@@ -20,6 +20,9 @@ module.exports = class Student {
             },
             updateStudentById: {
                 student: ["_id", "admissionNumber", "firstName", "lastName", "dateOfBirth", "gender", "classroomId", "schoolId", "status", "createdAt", "updatedAt", "enrolledAt"]
+            },
+            getStudents: {
+                students: ["_id", "admissionNumber", "firstName", "lastName", "dateOfBirth", "gender", "classroomId", "schoolId", "status", "createdAt", "updatedAt", "enrolledAt"]
             }
         };
         this.serialize = serializers.createSerializer(this.fieldExposed);
@@ -47,6 +50,12 @@ module.exports = class Student {
     }
 
     async getStudents({ __longToken }) {
+        if (__longToken.role !== "super_admin") {
+            const students = await this.mongomodels.student.find({ schoolId: __longToken.schoolId });
+            return {
+                students: students,
+            };
+        }
         const students = await this.mongomodels.student.find({});
         return {
             students: students,
