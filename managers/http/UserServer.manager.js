@@ -1,21 +1,21 @@
-const http              = require('http');
-const express           = require('express');
-const cors              = require('cors');
+const http = require('http');
+const express = require('express');
+const cors = require('cors');
 const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
-const requestIp         = require('request-ip');
-const swaggerUi         = require('swagger-ui-express');
-const openApiSpec       = require('../../config/openapi.config');
-const app               = express();
+const requestIp = require('request-ip');
+const swaggerUi = require('swagger-ui-express');
+const openApiSpec = require('../../config/openapi.config');
+const app = express();
 
 module.exports = class UserServer {
-    constructor({config, managers}){
-        this.config        = config;
-        this.userApi       = managers.userApi;
+    constructor({ config, managers }) {
+        this.config = config;
+        this.userApi = managers.userApi;
         this.registerDeclarativeRoutes = this.registerDeclarativeRoutes.bind(this);
     }
-    
+
     /** for injecting middlewares */
-    use(args){
+    use(args) {
         app.use(args);
     }
 
@@ -46,12 +46,12 @@ module.exports = class UserServer {
     }
 
     /** server configs */
-    run(){
+    run() {
         app.set('trust proxy', 1);
 
-        app.use(cors({origin: '*'}));
+        app.use(cors({ origin: '*' }));
         app.use(express.json());
-        app.use(express.urlencoded({ extended: true}));
+        app.use(express.urlencoded({ extended: true }));
         app.use('/static', express.static('public'));
 
         const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;
@@ -72,10 +72,13 @@ module.exports = class UserServer {
 
         /** an error handler */
         app.use((err, req, res, next) => {
+            if (err.name === 'SyntaxError') {
+                return res.status(400).json({ ok: false, message: 'Invalid JSON payload' });
+            }
             console.error(err.stack)
             res.status(500).send('Something broke!')
         });
-        
+
         /** preferred declarative REST-style routes */
         this.registerDeclarativeRoutes();
 
