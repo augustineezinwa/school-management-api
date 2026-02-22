@@ -1,6 +1,8 @@
 const http              = require('http');
 const express           = require('express');
 const cors              = require('cors');
+const rateLimit         = require('express-rate-limit');
+const requestIp         = require('request-ip');
 const swaggerUi         = require('swagger-ui-express');
 const openApiSpec       = require('../../config/openapi.config');
 const app               = express();
@@ -45,10 +47,28 @@ module.exports = class UserServer {
 
     /** server configs */
     run(){
+        app.set('trust proxy', 1);
+
         app.use(cors({origin: '*'}));
         app.use(express.json());
         app.use(express.urlencoded({ extended: true}));
         app.use('/static', express.static('public'));
+
+        const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;
+        const rateLimitMax = Number(process.env.RATE_LIMIT_MAX) || 100;
+        const apiLimiter = rateLimit({
+            windowMs: rateLimitWindowMs,
+            max: rateLimitMax,
+            standardHeaders: true,
+            legacyHeaders: false,
+            keyGenerator: (req) => requestIp.getClientIp(req) || req.ip || 'unknown',
+            message: { ok: false, message: 'Too many requests from this IP, please try again later.' },
+            handler: (req, res, next, options) => {
+                res.status(429).json(options.message);
+            },
+            skip: () => process.env.ENV === 'test',
+        });
+        app.use('/api', apiLimiter);
 
         /** an error handler */
         app.use((err, req, res, next) => {
