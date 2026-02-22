@@ -21,7 +21,7 @@ describe("Student validation integration", () => {
 
     test("enroll student fails when required fields are missing", async () => {
         const res = await request(ctx.app).post("/api/students").set("token", superToken).send({ firstName: "OnlyFirstName" });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
         expect(res.body.message).toBe("validation failed");
         expect(res.body.errors).toBeDefined();
@@ -36,7 +36,7 @@ describe("Student validation integration", () => {
 
     test("get student by id fails with invalid id", async () => {
         const res = await request(ctx.app).get("/api/students/not-valid-id").set("token", superToken);
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
         expect(res.body.message).toBe("validation failed");
         expect(res.body.errors).toBeDefined();
@@ -46,7 +46,7 @@ describe("Student validation integration", () => {
 
     test("transfer student fails when required fields are missing", async () => {
         const res = await request(ctx.app).patch("/api/students/64f0c3c6d2f0a2e7c7b4ab51/transfer").set("token", superToken).send({});
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
         expect(res.body.message).toBe("validation failed");
         expect(res.body.errors).toBeDefined();

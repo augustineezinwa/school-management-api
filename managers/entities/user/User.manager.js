@@ -30,9 +30,15 @@ module.exports = class User {
 
         // Data validation
         let result = await this.validators.user.createUser(user);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const userModel = this.mongomodels.user;
+
+        // check if school exists
+        if(schoolId) {
+            const school = await this.mongomodels.school.findById(schoolId);
+            if(!school) return { errors: 'School not found', code: 404 };
+        }
         
         // Creation Logic
         const hashedPassword = await this.tokenManager.hashPassword(password);
@@ -48,7 +54,7 @@ module.exports = class User {
 
     async login({ email, password }){
         let result = await this.validators.user.login({ email, password });
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const user = await this.mongomodels.user.findOne({ email });
         if(!user) return { errors: 'Invalid email or password', code: 401 };
@@ -65,7 +71,7 @@ module.exports = class User {
 
     async changePassword({ __headers, __longToken, password, newPassword}){
         let result = await this.validators.user.changePassword({ token: __headers.token, password, newPassword });
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         let decoded = this.tokenManager.verifyLongToken({token: __headers.token});
         if(!decoded) return { errors: 'Unauthorized', code: 401 };
@@ -84,7 +90,7 @@ module.exports = class User {
 
     async manageUserById({ __longToken, __userScope, __params, email, firstName, lastName, status }){
         let result = await this.validators.user.manageUserById({ id: __params.id, email, firstName, lastName, status });
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const user = await this.mongomodels.user.findById(__params.id);
         if(!user) return { errors: 'User not found', code: 404 };
@@ -101,7 +107,7 @@ module.exports = class User {
     async assignAdminToSchool({ __params, __longToken, schoolId }){
         const id = __params.id;
         let result = await this.validators.user.assignAdminToSchool(__params);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const school = await this.mongomodels.school.findById(schoolId);
         if(!school) return { errors: 'School not found', code: 404 };

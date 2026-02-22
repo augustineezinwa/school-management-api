@@ -24,7 +24,7 @@ describe("User validation integration", () => {
             email: "incomplete@example.com",
             firstName: "NoPassword",
         });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
         expect(res.body.message).toBe("validation failed");
         expect(res.body.errors).toBeDefined();
@@ -35,7 +35,7 @@ describe("User validation integration", () => {
 
     test("login fails when password is missing", async () => {
         const res = await request(ctx.app).post("/api/auth/login").send({ email: "test@example.com" });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
         expect(res.body.message).toBe("validation failed");
         expect(res.body.errors).toBeDefined();
@@ -45,7 +45,7 @@ describe("User validation integration", () => {
 
     test("login fails when email is missing", async () => {
         const res = await request(ctx.app).post("/api/auth/login").send({ password: "test@example.com" });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
         expect(res.body.message).toBe("validation failed");
         expect(res.body.errors).toBeDefined();
@@ -56,7 +56,7 @@ describe("User validation integration", () => {
 
     test("manage user fails with invalid id", async () => {
         const res = await request(ctx.app).patch("/api/users/not-valid-id").set("token", superToken).send({ firstName: "NewName" });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
     });
 });

@@ -5,55 +5,160 @@ function expressPathToOpenApi(path) {
     return path.replace(/:([a-zA-Z0-9_]+)/g, "{$1}");
 }
 
-function buildCommonResponses({ include404 = false, include409 = false }) {
-    const errorSchema = {
-        type: "object",
-        properties: {
-            ok: { type: "boolean", example: false },
-            data: { type: "object", additionalProperties: true, example: {} },
-            errors: {
-                oneOf: [
-                    { type: "string" },
-                    {
-                        type: "array",
-                        items: {
-                            oneOf: [{ type: "string" }, { type: "object", additionalProperties: true }],
-                        },
+const errorSchema = {
+    type: "object",
+    required: ["ok", "data", "errors", "message"],
+    properties: {
+        ok: { type: "boolean", example: false },
+        data: { type: "object", additionalProperties: true, example: {} },
+        errors: {
+            oneOf: [
+                { type: "string" },
+                {
+                    type: "array",
+                    items: {
+                        oneOf: [
+                            { type: "string" },
+                            {
+                                type: "object",
+                                properties: {
+                                    path: { type: "string" },
+                                    code: { type: "string" },
+                                    value: { type: "string" },
+                                    label: { type: "string" },
+                                    message: { type: "string" },
+                                    log: { type: "string" },
+                                    errors: { type: "array", items: {} },
+                                },
+                                additionalProperties: true,
+                            },
+                        ],
                     },
-                ],
-                example: ["validation failed"],
-            },
-            message: { type: "string", example: "validation failed" },
+                },
+            ],
         },
-    };
+        message: { type: "string" },
+    },
+};
+
+const errorExamples = {
+    400: {
+        ok: false,
+        data: {},
+        errors: "School not found",
+        message: "validation failed",
+    },
+    401: {
+        ok: false,
+        data: {},
+        errors: "Unauthorized",
+        message: "Unauthorized",
+    },
+    403: {
+        ok: false,
+        data: {},
+        errors: "Forbidden",
+        message: "Forbidden",
+    },
+    404: {
+        ok: false,
+        data: {},
+        errors: "School not found",
+        message: "validation failed",
+    },
+    409: {
+        ok: false,
+        data: {},
+        errors: [
+            { path: "email", code: "duplicate", value: "new.admin@school.com" },
+        ],
+        message: "resource [email] already exists",
+    },
+    422: {
+        ok: false,
+        data: {},
+        errors: [
+            { label: "firstName", path: "firstName", message: "firstName is required", log: "_required", errors: [] },
+            { label: "lastName", path: "lastName", message: "lastName is required", log: "_required", errors: [] },
+        ],
+        message: "validation failed",
+    },
+    500: {
+        ok: false,
+        data: {},
+        errors: "Internal server error",
+        message: "Internal server error",
+    },
+};
+
+function buildCommonResponses({ include404 = false, include409 = false }) {
     const responses = {
         400: {
             description: "Bad request / validation error",
-            content: { "application/json": { schema: errorSchema } },
+            content: {
+                "application/json": {
+                    schema: errorSchema,
+                    example: errorExamples[400],
+                },
+            },
         },
         401: {
             description: "Unauthorized",
-            content: { "application/json": { schema: errorSchema } },
+            content: {
+                "application/json": {
+                    schema: errorSchema,
+                    example: errorExamples[401],
+                },
+            },
         },
         403: {
             description: "Forbidden",
-            content: { "application/json": { schema: errorSchema } },
+            content: {
+                "application/json": {
+                    schema: errorSchema,
+                    example: errorExamples[403],
+                },
+            },
+        },
+        422: {
+            description: "Unprocessable entity / validation error (field details)",
+            content: {
+                "application/json": {
+                    schema: errorSchema,
+                    example: errorExamples[422],
+                },
+            },
         },
         500: {
             description: "Internal server error",
-            content: { "application/json": { schema: errorSchema } },
+            content: {
+                "application/json": {
+                    schema: errorSchema,
+                    example: errorExamples[500],
+                },
+            },
         },
     };
     if (include404) {
         responses[404] = {
             description: "Resource not found",
-            content: { "application/json": { schema: errorSchema } },
+            content: {
+                "application/json": {
+                    schema: errorSchema,
+                    example: errorExamples[404],
+                },
+            },
         };
     }
     if (include409) {
         responses[409] = {
             description: "Conflict (duplicate resource)",
-            content: { "application/json": { schema: errorSchema } },
+            content: {
+                "application/json": {
+                    schema: errorSchema,
+                    example: errorExamples[409],
+                },
+            },
         };
     }
     return responses;

@@ -21,7 +21,7 @@ describe("School validation integration", () => {
 
     test("create school fails when required fields are missing", async () => {
         const res = await request(ctx.app).post("/api/schools").set("token", superToken).send({ name: "NoEmailSchool" });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
         expect(res.body.errors[0].message).toBe("email is required");
         expect(res.body.errors[1].message).toBe("phone is required");
@@ -37,7 +37,7 @@ describe("School validation integration", () => {
             address: "Somewhere",
             establishedYear: "2011",
         });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
     });
 
@@ -53,7 +53,7 @@ describe("School validation integration", () => {
                 address: "Lagos",
                 establishedYear: "123020",
             });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.errors[0].message).toBe("establishedYear has invalid format");
         expect(res.body.ok).toBe(false);
     });

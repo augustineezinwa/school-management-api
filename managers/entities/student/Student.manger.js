@@ -30,7 +30,7 @@ module.exports = class Student {
        
         // Data validation
         let result = await this.validators.student.enrollStudent(student);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const classroom = await this.mongomodels.classroom.findOne({ _id: classroomId, schoolId });
         if(!classroom) return { errors: 'Classroom not found', code: 404 };
@@ -58,7 +58,7 @@ module.exports = class Student {
         
         // Data validation
         let result = await this.validators.student.getStudentById(__params);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
 
         const student = await this.mongomodels.student.findById(id);
@@ -71,7 +71,7 @@ module.exports = class Student {
     async updateStudentProfileById({ __longToken, __schoolScope, __params, admissionNumber, firstName, lastName, dateOfBirth, gender, status }){
         const id = __params.id;
         let result = await this.validators.student.getStudentById(__params);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const student = await this.mongomodels.student.findById(id);
         if(!student) return { errors: 'Student not found', code: 404 };
@@ -86,7 +86,7 @@ module.exports = class Student {
 
         // Data validation
         result = await this.validators.student.updateStudentProfileById(student);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         await student.save();
         return {
@@ -99,7 +99,7 @@ module.exports = class Student {
 
         // Data validation
         let result = await this.validators.student.deleteStudentById(__params);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const student = await this.mongomodels.student.findByIdAndDelete(id);
         if(!student) return { errors: 'Student not found', code: 404 };
@@ -113,7 +113,7 @@ module.exports = class Student {
     async transferStudent({ __longToken, __schoolScope, __params, classroomId, schoolId }){
         const id = __params.id;
         let result = await this.validators.student.transferStudent({ id, classroomId, schoolId });
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const student = await this.mongomodels.student.findById(id);
         if(!student) return { errors: 'Student not found', code: 404 };

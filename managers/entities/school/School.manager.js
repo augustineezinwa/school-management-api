@@ -34,7 +34,7 @@ module.exports = class School {
        
         // Data validation
         let result = await this.validators.school.createSchool(school);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const schoolModel = this.mongomodels.school;
         const newSchool = await schoolModel.create(school);
@@ -55,7 +55,7 @@ module.exports = class School {
         
         // Data validation
         let result = await this.validators.school.getSchoolById(__params);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
 
         const school = await this.mongomodels.school.findById(id);
@@ -71,7 +71,7 @@ module.exports = class School {
 
         // Data validation
         let result = await this.validators.school.updateSchoolById(body);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const school = await this.mongomodels.school.findByIdAndUpdate(id, body, { new: true });
         if(!school) return { errors: 'School not found', code: 404 };
@@ -85,7 +85,7 @@ module.exports = class School {
     
         // Validate
         const result = await this.validators.school.deleteSchoolById(__params);
-        if (result) return { errors: result };
+        if (result) return { errors: result, code: 422 };
     
         const session = await this.mongomodels.school.startSession();
     
@@ -128,7 +128,7 @@ module.exports = class School {
     async updateSchoolProfile({ __longToken, __schoolScope, __params, name, email, phone, address, website, motto, establishedYear, imageUrl }){
         const id = __params.id;
         let result = await this.validators.school.getSchoolById(__params);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const school = await this.mongomodels.school.findById(id);
         if(!school) return { errors: 'School not found', code: 404 };
@@ -144,7 +144,7 @@ module.exports = class School {
 
         // Data validation
         result = await this.validators.school.updateSchoolProfile(school);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         await school.save();
         return { school: school };

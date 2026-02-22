@@ -29,7 +29,7 @@ module.exports = class Classroom {
        
         // Data validation
         let result = await this.validators.classroom.createClassRoom(classroom);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const classroomModel = this.mongomodels.classroom;
         const newClassroom = await classroomModel.create(classroom);
@@ -41,7 +41,7 @@ module.exports = class Classroom {
     async manageClassroomById({ __longToken, __schoolScope, __params, capacity, numberOfDesks, numberOfComputers, hasProjector, status }){
         const id = __params.id;
         let result = await this.validators.classroom.manageClassroomById(__params);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const classroom = await this.mongomodels.classroom.findById(id);
         if(!classroom) return { errors: 'Classroom not found', code: 404 };
@@ -54,7 +54,7 @@ module.exports = class Classroom {
 
         // Data validation
         result = await this.validators.classroom.manageClassroomById(classroom);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         await classroom.save();
         return {
@@ -64,7 +64,7 @@ module.exports = class Classroom {
 
     async getClassroomsBySchoolId({ __longToken, __schoolScope, __params }) {
        let result = await this.validators.classroom.getClassroomsBySchoolId(__params);
-       if(result) return { errors: result };
+       if(result) return { errors: result, code: 422 };
 
        const classrooms = await this.mongomodels.classroom.find({ schoolId: __params.schoolId });
        return {
@@ -77,7 +77,7 @@ module.exports = class Classroom {
 
         // Data validation
         let result = await this.validators.classroom.deleteClassroomById(__params);
-        if(result) return { errors: result };
+        if(result) return { errors: result, code: 422 };
 
         const session = await this.mongomodels.classroom.startSession();
         try {

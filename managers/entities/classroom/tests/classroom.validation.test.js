@@ -21,7 +21,7 @@ describe("Classroom validation integration", () => {
 
     test("create classroom fails when required fields are missing", async () => {
         const res = await request(ctx.app).post("/api/classrooms").set("token", superToken).send({ name: "OnlyName" });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
         expect(res.body.message).toBe("validation failed");
         expect(res.body.errors).toBeDefined();
@@ -36,7 +36,7 @@ describe("Classroom validation integration", () => {
             .patch("/api/classrooms/not-a-valid-id")
             .set("token", superToken)
             .send({ capacity: 80 });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
         expect(res.body.message).toBe("validation failed");
         expect(res.body.errors).toBeDefined();
@@ -46,7 +46,7 @@ describe("Classroom validation integration", () => {
 
     test("delete classroom fails for invalid id", async () => {
         const res = await request(ctx.app).delete("/api/classrooms/invalid-id").set("token", superToken);
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.ok).toBe(false);
     });
 });
