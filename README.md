@@ -1,4 +1,6 @@
-# School Management API [API Docs](https://school-management-api-mjci.onrender.com/api/docs)
+# School Management API 
+
+### [API Docs page](https://school-management-api-mjci.onrender.com/api/docs)
 
 REST API for managing schools, classrooms, students, and users with role-based access control (RBAC), scope enforcement, and OpenAPI documentation.
 
